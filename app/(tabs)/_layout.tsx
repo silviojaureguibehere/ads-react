@@ -32,6 +32,16 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="playwire"
+        options={{
+          title: 'Playwire',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+          ),
+        }}
+      />
+
     </Tabs>
   );
 }

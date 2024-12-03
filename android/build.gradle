@@ -1,0 +1,64 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext {
+        buildToolsVersion = findProperty('android.buildToolsVersion') ?: '34.0.0'
+        minSdkVersion = Integer.parseInt(findProperty('android.minSdkVersion') ?: '24')
+        compileSdkVersion = Integer.parseInt(findProperty('android.compileSdkVersion') ?: '34')
+        targetSdkVersion = Integer.parseInt(findProperty('android.targetSdkVersion') ?: '34')
+        kotlinVersion = findProperty('android.kotlinVersion') ?: '1.9.23'
+
+        ndkVersion = "26.1.10909125"
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath('com.android.tools.build:gradle')
+        classpath('com.facebook.react:react-native-gradle-plugin')
+        classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')
+    }
+}
+
+apply plugin: "com.facebook.react.rootproject"
+
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+
+allprojects {
+    repositories {
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url(new File(['node', '--print', "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim(), '../android'))
+        }
+        maven {
+            // Android JSC is installed from npm
+            url(new File(['node', '--print', "require.resolve('jsc-android/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim(), '../dist'))
+        }
+
+        google()
+        mavenCentral()
+        maven { url 'https://www.jitpack.io' }
+                maven {
+            name = "GitHubPackages"
+            url = uri(keystoreProperties['maven_repo_read_url'])
+            credentials {
+                username = keystoreProperties['maven_repo_read_username']
+                password = keystoreProperties['maven_repo_read_password']
+            }
+        }
+        maven {
+            url 'https://android-sdk.is.com/'
+        }
+        maven {
+            // Pangle
+            url 'https://artifact.bytedance.com/repository/pangle/'
+        }
+        maven {
+            url 'https://cboost.jfrog.io/artifactory/chartboost-ads'
+        }
+    }
+}
